@@ -1,0 +1,222 @@
+---
+title       : Análisis exploratorio de datos  
+subtitle    : Conceptos generales  
+author      : Kevin Pérez C, Ingeniero de Sistemas - Estadístico
+job         : (C) Msc. Ciencia de datos 
+logo        : logou.png
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+widescreen  : true
+smaller     : true
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : [mathjax, bootstrap, quiz, shiny, interactive]     
+ext_widgets: {rCharts: [libraries/nvd3]}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## AED
+
+El _AED_ reúne un conjunto de técnicas provenientes de la estadística descriptiva y el análisis gráfico que tiene por objetivo:
+
+> - Entender las propiedades y características de los datos 
+
+> - Encontrar patrones latentes en los datos 
+
+> - Sugerir estrategias de modelación de los datos 
+
+> - "Depurar" el análisis 
+
+> - Comunicar resultados 
+
+
+---
+
+## AED
+
+El _AED_ a su vez se puede entender teniendo en cuenta distintas perspectivas debido a su relevancia en el proceso de análisis de datos 
+
+> - Tipos de variables 
+
+> - Dimensión de los datos 
+
+> - Tipo de estudio 
+
+
+---
+
+
+## AED - Variables 
+
+ 
+- **Numéricas (Cuantitativas):** Valores numéricos 
+
+   - _Continuas_: Número infinito de valores dentro de un rango determinado  
+   - _Discretas_: Conjunto especifico de valores que pueden ser contados o enumerados 
+   
+- **Categóricas (Cualitativas):** Un número limitado de distintas categorías
+
+   - _Ordinales_: Número finito de valores dentro de un rango determinado
+
+---
+
+## AED - Variables 
+
+### Categóricas 
+
+- Son importantes para la modelación 
+
+- Permiten explicar mejor los problemas 
+
+- Conteos de frecuencias, resúmenes y subgrupos 
+
+- Dependiendo de la dimensión, se pueden utilizar, Tablas, diagramas de Barra, Gantt, Mosaicos, etc. 
+
+---
+
+## AED - Variables 
+
+### Numéricas  
+
+- Son importantes para la modelación 
+
+- Permiten las estimaciones y cálculos inferenciales 
+
+- Dependiendo de la dimensión, se pueden utilizar, Histogramas, Boxplots, Densidades, etc.
+
+---
+
+## AED - Dimensiones 
+
+Teniendo en cuenta la dimensión de los datos a estudiar (Univariada o Multivariada) el AED se centra en la causalidad y posibles relaciones entre las variables 
+
+- Estadística descriptiva:
+
+$$\bar{x}=\sum_{i=1}^n x_i;\quad S^2=\frac{\sum_{x=1}^n(x_i-\bar{x})}{n-1};r_{xy}=\frac{S_{xy}}{S_xS_y}$$
+
+- Análisis factorial y reducción de la dimensión  
+
+  - _ACP_ y _DVS_
+  
+- Gráficos multivariados  (Ejemplos) 
+
+
+---
+
+## AED - Tipos de estudio 
+
+- **Estudios de observación:** 
+
+   - Recopilar datos de una manera que no interfiera directamente con la forma en que surgen.
+   - Sólo se puede deducir la correlación
+   
+- **Experimental**
+
+   - Asignar aleatoriamente a los sujetos a varios tratamientos
+   - Se puede inferir la causalidad
+   
+
+--- 
+
+
+## AED - Ejemplos 
+
+_"Fuel economy data from 1999 and 2008 for 38 popular models of car"_, este conjunto de datos contiene una muestra del análisis de economía en combustible que la **EPA** pone a disposición en [EPA Fuel Economy](http://fueleconomy.gov)
+
+```{r, echo=FALSE}
+suppressMessages(suppressWarnings(library(knitr)))
+suppressMessages(suppressWarnings(library(dplyr)))
+suppressMessages(suppressWarnings(library(ggplot2)))
+suppressMessages(suppressWarnings(library(gridExtra)))
+suppressMessages(suppressWarnings(library(GGally)))
+data(mpg)
+kable(head(mpg))
+```
+
+
+---
+
+## AED - Ejemplos 
+
+### Variables 
+
+```{r, echo=FALSE, fig.align='center', fig.height=5.5, fig.width=13}
+g <- ggplot(mpg, aes(class)) + geom_bar() + theme_minimal()
+
+g1 <- ggplot(mpg, aes(class)) + 
+     geom_bar(aes(fill = drv), position = position_stack(reverse = TRUE)) +
+     scale_color_brewer(palette = "Accent") + coord_flip()  + theme_minimal() + theme(legend.position = "top") 
+
+grid.arrange(g, g1, nrow = 1, ncol = 2)
+
+```
+
+---
+
+## AED - Ejemplos 
+
+### Variables 
+
+```{r, echo=FALSE, fig.align='center', fig.height=5.5, fig.width=13}
+g2 <- ggplot(mpg, aes(class, hwy)) + geom_boxplot() + theme_minimal()
+g3 <- ggplot(mpg, aes(class, hwy)) + geom_boxplot(aes(colour = drv)) + theme_minimal()
+grid.arrange(g2, g3, nrow = 1, ncol = 2)
+```
+
+---
+
+## AED - Ejemplos 
+
+### Variables 
+
+```{r, echo=FALSE, fig.align='center', fig.height=5.5, fig.width=13, message=FALSE, warning=FALSE}
+g4 <- ggplot(mpg, aes(hwy)) + geom_histogram() + theme_minimal()
+g5 <- ggplot(mpg, aes(hwy, colour = drv)) + geom_density() + theme_minimal()
+grid.arrange(g4, g5, nrow = 1, ncol = 2)
+```
+
+---
+
+## AED - Ejemplos 
+
+### Dimensión  
+
+```{r, echo=FALSE, fig.align='center', fig.height=6, fig.width=14, message=FALSE, warning=FALSE}
+
+ggpairs(data = mpg, columns = c(3,8,9), mapping = aes(color = drv)) + theme_minimal()
+```
+
+---
+
+## AED - Ejemplos 
+
+### Tipo de estudio 
+
+```{r, echo=FALSE, fig.align='center', fig.height=6, fig.width=14, message=FALSE, warning=FALSE}
+
+p <- ggplot(mpg, aes(displ, hwy)) +
+  geom_point() +
+  geom_smooth(method = "lm") + theme_minimal()
+
+p1 <- ggplot(mpg, aes(displ, hwy, colour = class)) + geom_point() +
+  geom_smooth(se = FALSE, method = "lm") + theme_minimal()
+
+grid.arrange(p, p1, nrow = 1, ncol = 2)
+```
+
+---
+
+
+## AED - Ejemplos 
+
+### Tipo de estudio 
+
+```{r, echo=FALSE, fig.align='center', fig.height=5.5, fig.width=13, message=FALSE, warning=FALSE}
+mpg %>% 
+    ggplot() +
+    aes(x = class, color = drv, group = drv, y = cty) +
+    stat_summary(fun.y = mean, geom = "point") +
+    stat_summary(fun.y = mean, geom = "line") + theme_minimal()
+
+```
+
